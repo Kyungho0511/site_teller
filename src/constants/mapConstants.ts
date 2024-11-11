@@ -9,8 +9,9 @@ export const configs = {
     zoom: 11,
     pitch: 0,
     bearing: 0,
-    antialias: true
+    antialias: true,
   },
+  camera: { fov: 40 },
 };
 
 export const GEOID = "GEOID";
@@ -23,7 +24,7 @@ export const POPUP = {
   width: 250,
   height: 180,
   offset: 30,
-}
+};
 
 export type Hex = `#${string}`;
 
@@ -38,7 +39,7 @@ export type FillColor = {
   g: number;
   b: number;
   a: number;
-}
+};
 
 export const color: { [key in string]: Color } = {
   blue: {
@@ -58,7 +59,12 @@ export const color: { [key in string]: Color } = {
   },
 };
 
-export type UnitType = "population density" | "percentage" | "percentage * 100" | "dollar" | "dollar * 50";
+export type UnitType =
+  | "population density"
+  | "percentage"
+  | "percentage * 100"
+  | "dollar"
+  | "dollar * 50";
 
 export type MapLayer = {
   name: string;
@@ -80,163 +86,171 @@ export type MapAttribute = {
 export const mapAttributes: MapAttribute[] = [
   {
     name: "medicaid enrollees / km2",
-    bound: { min: 48.19, max: 55472.48, rateOfChange: ["exponential", 0.99995] },
-    unit: "population density"
+    bound: {
+      min: 48.19,
+      max: 55472.48,
+      rateOfChange: ["exponential", 0.99995],
+    },
+    unit: "population density",
   },
   {
     name: "commercial enrollees / km2",
-    bound: { min: 214.31, max: 42294.7, rateOfChange: ["exponential", 0.99995] },
-    unit: "population density"
+    bound: {
+      min: 214.31,
+      max: 42294.7,
+      rateOfChange: ["exponential", 0.99995],
+    },
+    unit: "population density",
   },
   {
     name: "insured population / km2",
     bound: { min: 316.5, max: 76410.9, rateOfChange: ["exponential", 0.99995] },
-    unit: "population density"
+    unit: "population density",
   },
   {
     name: "unserved population / km2",
     bound: { min: 12.7, max: 45610.7, rateOfChange: ["exponential", 0.99995] },
-    unit: "population density"
+    unit: "population density",
   },
   {
     name: "unserved medicaid enrollees / km2",
     bound: { min: 0.0, max: 45610.7, rateOfChange: ["exponential", 0.99995] },
-    unit: "population density"
+    unit: "population density",
   },
   {
     name: "unserved commercial enrollees / km2",
     bound: { min: 0.0, max: 12665.9, rateOfChange: ["exponential", 0.99995] },
-    unit: "population density"
+    unit: "population density",
   },
   {
     name: "average land price / ft2",
     bound: { min: 2.67, max: 34.29, rateOfChange: ["linear"] },
-    unit: "dollar * 50"
+    unit: "dollar * 50",
   },
   {
     name: "agricultural land percent",
     bound: { min: 0.0, max: 0.1, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
   {
     name: "residential district percent",
     bound: { min: 0.08, max: 1.0, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
   {
     name: "vacant land percent",
     bound: { min: 0.0, max: 0.53, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
   {
     name: "commercial district percent",
     bound: { min: 0.0, max: 0.48, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
   {
     name: "industrial district percent",
     bound: { min: 0.0, max: 0.08, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
   {
     name: "drove alone percent",
     bound: { min: 0.01, max: 0.72, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
-  { 
-    name: "carpooled percent", 
+  {
+    name: "carpooled percent",
     bound: { min: 0.0, max: 0.28, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
   {
     name: "public transit percent",
     bound: { min: 0.09, max: 0.94, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
-  { 
-    name: "walked percent", 
+  {
+    name: "walked percent",
     bound: { min: 0.0, max: 0.58, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
   {
     name: "worked from home percent",
     bound: { min: 0.0, max: 0.34, rateOfChange: ["linear"] },
-    unit: "percentage * 100"
+    unit: "percentage * 100",
   },
   {
     name: "no leisure-time physical activity",
     bound: { min: 17.5, max: 51.2, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
-  { 
-    name: "binge drinking", 
+  {
+    name: "binge drinking",
     bound: { min: 8.8, max: 22.2, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "sleeping less than 7 hours",
     bound: { min: 28.4, max: 46.8, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
-  { 
-    name: "current smoking", 
+  {
+    name: "current smoking",
     bound: { min: 7.9, max: 30.1, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "cholesterol screening",
     bound: { min: 70.6, max: 92.9, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "current lack of health insurance",
     bound: { min: 4.1, max: 30.4, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "taking medicine for high blood pressure",
     bound: { min: 57.2, max: 86.8, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "visits to dentist or dental clinic",
     bound: { min: 34.6, max: 77.2, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "visits to doctor for routine checkup",
     bound: { min: 67.4, max: 85.6, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "physical health not good for >=14 days",
     bound: { min: 7.0, max: 21.7, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "mental health not good for >=14 days",
     bound: { min: 10.4, max: 27.7, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "fair or poor self-rated health status",
     bound: { min: 9.4, max: 39.1, rateOfChange: ["linear"] },
-    unit: "percentage"
+    unit: "percentage",
   },
   {
     name: "median household income",
     bound: { min: 17083.0, max: 191083.0, rateOfChange: ["linear"] },
-    unit: "dollar"
+    unit: "dollar",
   },
   {
     name: "median household disposable income",
     bound: { min: 3107.0, max: 150067.0, rateOfChange: ["linear"] },
-    unit: "dollar"
+    unit: "dollar",
   },
   {
     name: "median monthly housing cost",
     bound: { min: 388.0, max: 3418.0, rateOfChange: ["linear"] },
-    unit: "dollar"
+    unit: "dollar",
   },
 ];
 
@@ -268,27 +282,20 @@ export const mapSections: MapSection[] = [
   },
   {
     id: "cluster1",
-    layers: [
-      { name: "tracts", opacity: 0.9 },
-    ],
+    layers: [{ name: "tracts", opacity: 0.9 }],
     parentLayer: "cluster1",
-    color: color.yellow
+    color: color.yellow,
   },
   {
     id: "cluster2",
-    layers: [
-      { name: "tracts", opacity: 0.9 },
-    ],
+    layers: [{ name: "tracts", opacity: 0.9 }],
     parentLayer: "cluster2",
-    color: color.blue
+    color: color.blue,
   },
   {
     id: "cluster3",
-    layers: [
-      { name: "tracts", opacity: 0.9 },
-    ],
+    layers: [{ name: "tracts", opacity: 0.9 }],
     parentLayer: "cluster3",
-    color: color.green
+    color: color.green,
   },
 ];
-

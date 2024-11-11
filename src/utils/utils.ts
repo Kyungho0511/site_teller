@@ -1,6 +1,11 @@
-import { HealthcarePropertyName } from '../constants/geoJsonConstants';
+import { HealthcarePropertyName } from "../constants/geoJsonConstants";
 import { Section } from "../constants/surveyConstants";
-import { FillColor, MapBound, UnitType, mapAttributes } from "../constants/mapConstants";
+import {
+  FillColor,
+  MapBound,
+  UnitType,
+  mapAttributes,
+} from "../constants/mapConstants";
 
 /**
  * Returns the section name corresponding to the path.
@@ -22,14 +27,16 @@ export function pathToSection(path: string): Section {
  * @param attribute name of the attribute in search for the bound.
  */
 export function getBound(attribute: HealthcarePropertyName): MapBound {
-    return mapAttributes.find((attr) => attr.name === attribute)!.bound;
+  return mapAttributes.find((attr) => attr.name === attribute)!.bound;
 }
 
 /**
  * Get the unit type corresponding to the attribute name.
  * @param attribute name of the attribute in search for the unit type.
  */
-export function getUnit(attribute: HealthcarePropertyName): UnitType | undefined {
+export function getUnit(
+  attribute: HealthcarePropertyName
+): UnitType | undefined {
   return mapAttributes.find((attr) => attr.name === attribute)?.unit;
 }
 
@@ -50,7 +57,7 @@ export function formatUnit(num: number, unit: UnitType): string {
       return `$ ${Math.round(num).toLocaleString("en-US")}`;
     case "dollar * 50":
       return `$ ${Math.round(num * 50).toLocaleString("en-US")}`;
-    default: 
+    default:
       return `${Math.round(num)}`;
   }
 }
@@ -58,7 +65,7 @@ export function formatUnit(num: number, unit: UnitType): string {
 /**
  * Restore original value of the normalized number(0-1)
  * @param value value to be restored.
- * @param bound bound of the original value. 
+ * @param bound bound of the original value.
  */
 export function unNormalize(value: number, bound: MapBound): number {
   return (bound.max - bound.min) * value;
@@ -89,5 +96,14 @@ export function parseString(value: string): string {
  * @param fillColor Fill color to check.
  */
 export function isWhiteFillColor(fillColor: FillColor): boolean {
-  return fillColor.r == 1 && fillColor.g == 1 && fillColor.b == 1 && fillColor.a == 1;
+  return (
+    fillColor.r == 1 && fillColor.g == 1 && fillColor.b == 1 && fillColor.a == 1
+  );
+}
+
+/**
+ * Convert degrees to radians.
+ */
+export function toRadians(degrees: number): number {
+  return degrees * (Math.PI / 180);
 }

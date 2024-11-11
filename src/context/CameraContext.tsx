@@ -1,37 +1,52 @@
-import React, { createContext, useContext, useState } from 'react';
-import * as Cesium from 'cesium';
-import { configs } from '../constants/mapConstants';
-import { ViewerContext } from './ViewerContext';
+import React, { createContext, useContext, useState } from "react";
+import * as Cesium from "cesium";
+import { configs } from "../constants/mapConstants";
+import { ViewerContext } from "./ViewerContext";
 
+/**
+ * Camera state in cartographic coordinates.
+ * @property fov: radian value of the field of view.
+ * @property fovRatio: Ratio of fov to fovY from the mapbox camera. It's used to sync cameras of the map and satellite viewers.
+ */
 export type CameraState = {
   center: [number, number];
   zoom: number;
   bearing: number;
   pitch: number;
-}
+  fov: number;
+  fovY?: number;
+  fovRatio?: number;
+};
 
 type CameraContextProps = {
   cameraState: CameraState;
   setCameraState: React.Dispatch<React.SetStateAction<CameraState>>;
   syncMapCamera: (cameraState: CameraState) => void;
   syncSatelliteCamera: (cameraState: CameraState) => void;
-}
+};
 
 /**
  * Context that stores the camera state in cartographic coordinates.
  */
-export const CameraContext = createContext<CameraContextProps>({} as CameraContextProps);
+export const CameraContext = createContext<CameraContextProps>(
+  {} as CameraContextProps
+);
 
 /**
  * Context provider that stores the camera state in cartographic coordinates.
  */
-export function CameraContextProvider({children}: {children: React.ReactNode}) {
+export function CameraContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { mapViewer, satelliteViewer } = useContext(ViewerContext);
   const [cameraState, setCameraState] = useState<CameraState>({
     center: configs.location.center as [number, number],
     zoom: configs.location.zoom,
     bearing: configs.location.bearing,
     pitch: configs.location.pitch,
+    fov: configs.camera.fov,
   });
 
   const syncMapCamera = (cameraState: CameraState) => {
@@ -43,22 +58,25 @@ export function CameraContextProvider({children}: {children: React.ReactNode}) {
       bearing: cameraState.bearing,
       pitch: cameraState.pitch,
     });
-  }
+  };
 
   const syncSatelliteCamera = (cameraState: CameraState) => {
     if (!satelliteViewer) return;
+    const { center, zoom, bearing, pitch, fov, fovRatio } = cameraState;
 
-    const { center, zoom, bearing, pitch } = cameraState;
-    
-    // Calculate altitude based on zoom level
+    // Calculate altitude based on zoom level using Web Mercator relationship
     const earthCircumference = 40075016.686; // in meters
-    const groundResolution = earthCircumference * Math.cos(Cesium.Math.toRadians(center[1])) / (256 * Math.pow(2, zoom));
-    const modifier = 0.785;
-    const altitude = modifier * groundResolution * (satelliteViewer.canvas.clientHeight / 2) / Math.tan(Cesium.Math.toRadians(30));
+    // At zoom level 0, one tile covers half the earth
+    const metersPerPixel =
+      (earthCircumference * Math.cos(Cesium.Math.toRadians(center[1]))) /
+      (256 * Math.pow(2, zoom));
+    // Apply modifier to fine-tune the zoom level
+    const modifier = 2.4;
+    const altitude = metersPerPixel * 256 * modifier;
 
     const cartographic = new Cesium.Cartographic(
-      Cesium.Math.toRadians(center[0]),  // longitude
-      Cesium.Math.toRadians(center[1]),  // latitude
+      Cesium.Math.toRadians(center[0]), // longitude
+      Cesium.Math.toRadians(center[1]), // latitude
       altitude
     );
 
@@ -70,7 +88,13 @@ export function CameraContextProvider({children}: {children: React.ReactNode}) {
         roll: 0,
       },
     });
-  }
+
+    // Adjust the fov of the satellite viewer to sync with the map viewer's fov
+    if (!fovRatio) return;
+    const frustum = satelliteViewer.camera.frustum as Cesium.PerspectiveFrustum;
+    frustum.fov = fovRatio >= 1 ? fovRatio * fov : fov;
+    console.log(fovRatio);
+  };
 
   return (
     <CameraContext.Provider
