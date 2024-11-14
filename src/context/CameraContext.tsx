@@ -15,7 +15,7 @@ export type CameraState = {
   pitch: number;
   fov: number;
   fovY?: number;
-  fovRatio?: number;
+  fovModifier?: number;
 };
 
 type CameraContextProps = {
@@ -62,7 +62,8 @@ export function CameraContextProvider({
 
   const syncSatelliteCamera = (cameraState: CameraState) => {
     if (!satelliteViewer) return;
-    const { center, zoom, bearing, pitch, fov, fovRatio } = cameraState;
+    const { center, zoom, bearing, pitch, fov, fovY, fovModifier } =
+      cameraState;
 
     // Calculate altitude based on zoom level using Web Mercator relationship
     const earthCircumference = 40075016.686; // in meters
@@ -89,11 +90,14 @@ export function CameraContextProvider({
       },
     });
 
-    // Adjust the fov of the satellite viewer to sync with the map viewer's fov
-    if (!fovRatio) return;
+    // Satellite viewer keeps the same ground coverage in X direction, whereas
+    // the map viewer does not. So, we need to adjust the fov of the satellite viewer.
+    if (!fovModifier || !fovY) return;
     const frustum = satelliteViewer.camera.frustum as Cesium.PerspectiveFrustum;
-    frustum.fov = fovRatio >= 1 ? fovRatio * fov : fov;
-    console.log(fovRatio);
+    const fovRatio = fov / fovY;
+    frustum.fov = fovRatio >= 1 ? fovRatio * fovModifier * fov : fov;
+
+    // console.log(fovRatio);
   };
 
   return (

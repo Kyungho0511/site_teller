@@ -8,6 +8,7 @@ import { ViewerContext } from "../../context/ViewerContext";
 import { mapSections } from "../../constants/mapConstants";
 import { Section } from "../../constants/surveyConstants";
 import useEffectAfterMount from "../../hooks/useEffectAfterMount";
+import { pre } from "framer-motion/client";
 
 /**
  * Mapbox map viewer component.
@@ -18,6 +19,13 @@ export default function MapViewer() {
   const { cameraState, setCameraState } = useContext(CameraContext);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
+
+  // Track browser dimension to check resizing direction.
+  const prevDimension = useRef({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  const prevFovY = useRef<number>();
 
   // Create a map instance on component mount.
   useEffect(() => {
@@ -62,7 +70,7 @@ export default function MapViewer() {
   //   console.log("center: ", `${mapViewer!.getCenter().lat}, ${mapViewer!.getCenter().lng}`);
   // }, [cameraState])
 
-  // Update the camera state when the map ends moving.
+  // Update the camera state
   useEffectAfterMount(() => {
     if (!mapViewer) return;
 
@@ -78,14 +86,33 @@ export default function MapViewer() {
         } as CameraState;
       });
     };
+
     const onResize = () => {
+      const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight;
+      const widthChange = newWidth - prevDimension.current.width;
+      const heightChange = newHeight - prevDimension.current.height;
+      prevDimension.current = { width: newWidth, height: newHeight };
+
       const fov = toRadians(mapViewer.transform.fov); // in radians
       const fovY = mapViewer.transform.fovY; // in radians
-      const fovRatio = fov / fovY;
+      const fovYChange = prevFovY.current ? fovY - prevFovY.current : 0;
+      prevFovY.current = fovY;
+
+      console.log("widthChange: ", widthChange, "heightChange: ", heightChange);
+      console.log("fovYChange: ", fovYChange);
+
+      // Calculate fov Modifier based on resizing direction!!!
+      // Calculate fov Modifier based on resizing direction!!!
+      // Calculate fov Modifier based on resizing direction!!!
+      // Calculate fov Modifier based on resizing direction!!!
+      const fovModifier = 0;
+
       setCameraState((prev) => {
-        return { ...prev, fov, fovY, fovRatio } as CameraState;
+        return { ...prev, fov, fovY, fovModifier } as CameraState;
       });
     };
+
     mapViewer.on("moveend", onMoveEnd);
     window.addEventListener("resize", onResize);
 
